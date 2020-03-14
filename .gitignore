@@ -1,0 +1,4 @@
+*.retry
+*sample*
+*secret*
+*facts*

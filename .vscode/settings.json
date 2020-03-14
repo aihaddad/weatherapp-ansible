@@ -1,0 +1,14 @@
+{
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2,
+    "editor.rulers": [
+        100,
+        140,
+        180
+    ],
+    "files.associations": {
+        "**/*.yml": "ansible-advanced",
+        "**/*.json": "jsonc",
+        "**/inventory": "ini"
+    }
+}

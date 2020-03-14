@@ -1,0 +1,5 @@
+localhost ansible_connection=local ansible_python_interpreter=/usr/bin/python3
+
+# Add any manual configuration above this comment
+# Anything below this comment will be managed by Ansible, Leave as is!
+[webservers]
