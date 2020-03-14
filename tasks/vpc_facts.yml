@@ -1,0 +1,33 @@
+- file: 
+    path: facts/default_vpc.yml
+    state: absent
+  tags: ['cleanup']
+
+- name: Get default VPC facts
+  ec2_vpc_net_info:
+    filters:
+      "isDefault": "true"
+  register: default_vpc
+
+- name: Store facts to YAML
+  lineinfile:
+    path: facts/default_vpc.yml
+    create: yes
+    line: "{{ default_vpc | to_nice_yaml(indent=2) }}"
+
+- file: 
+    path: facts/default_subnets.yml
+    state: absent
+  tags: ['cleanup']
+
+- name: Get subnet facts
+  ec2_vpc_subnet_info:
+    filters:
+      vpc-id: "{{ default_vpc.vpcs[0].vpc_id }}"
+  register: default_subnets
+
+- name: Store facts to YAML
+  lineinfile:
+    path: facts/default_subnets.yml
+    create: yes
+    line: "{{ default_subnets | to_nice_yaml(indent=2) }}"

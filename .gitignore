@@ -1,4 +1,4 @@
 *.retry
 *sample*
 *secret*
-*facts*
+*facts/*
