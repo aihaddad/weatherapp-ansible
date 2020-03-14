@@ -1,0 +1,12 @@
+---
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    - include_tasks: tasks/prepare.yml
+      tags: ['up', 'down']
+
+- hosts: webservers
+  gather_facts: no
+  tasks:
+    - ping:
+      tags: ['always']
