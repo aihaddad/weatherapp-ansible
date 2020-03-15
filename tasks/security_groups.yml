@@ -1,6 +1,12 @@
+- name: Terminate base webserver
+  include: base_webserver_terminate.yml
+
+- pause:
+    minutes: 1
+
 - name: Cleanup webservers security group
   ec2_group:
-    name: webservers-access
+    name: webservers_access
     state: absent
   tags: ['cleanup']
 
@@ -9,7 +15,7 @@
 
 - name: Create webservers security group
   ec2_group:
-    name: webservers-access
+    name: webservers_access
     description: Assign access to webserver instances using Ansible
     vpc_id: "{{ default_vpc.vpcs[0].vpc_id }}"
     rules:

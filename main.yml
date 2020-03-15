@@ -10,3 +10,6 @@
       tags: ['cleanup', 'git']
     - include_tasks: tasks/security_groups.yml
       tags: ['cleanup']
+    - include_tasks: tasks/base_webserver_launch.yml
+      tags: ['cleanup']
+
