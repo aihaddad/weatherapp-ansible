@@ -8,7 +8,7 @@
   ec2_group:
     name: webservers_access
     state: absent
-  tags: ['cleanup']
+  tags: ['never', 'cleanup']
 
 - name: Get my public IP
   ipify_facts: # returns ipify_public_ip

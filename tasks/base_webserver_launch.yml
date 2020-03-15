@@ -37,6 +37,7 @@
 - name: Get base webserver facts
   ec2_instance_info:
     filters:
+      instance-state-name: running
       tag:Name: AnsibleBaseWebserver
   register: base_webserver
 

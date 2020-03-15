@@ -1,0 +1,29 @@
+- name: Get base webserver facts
+  ec2_instance_info:
+    filters:
+      instance-state-name: running
+      tag:Name: AnsibleBaseWebserver
+  register: base_webserver
+  tags: ['never', 'cleanup']
+
+- name: Cleanup facts file
+  file:
+    path: facts/base_webserver.yml
+    state: absent
+  tags: ['never', 'cleanup']
+
+- name: Terminate base webserver instance
+  ec2_instance:
+    instance_ids:
+      - "{{ base_webserver.instances[0].instance_id }}"
+    state: terminated
+    wait: yes
+  tags: ['never', 'cleanup']
+
+- name: Remove webservers from inventory
+  lineinfile:
+    path: inventory
+    regexp: '^base_webserver\s' # '^base_webserver\s[a-zA-Z0-9\s\\\-\'\s\./_=]*'
+    state: absent
+  tags: ['never', 'cleanup']
+- meta: refresh_inventory
