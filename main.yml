@@ -8,3 +8,5 @@
       tags: ['cleanup']
     - include_tasks: tasks/keypairs.yml
       tags: ['cleanup', 'git']
+    - include_tasks: tasks/security_groups.yml
+      tags: ['cleanup']

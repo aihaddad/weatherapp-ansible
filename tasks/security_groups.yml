@@ -1,0 +1,25 @@
+- name: Cleanup webservers security group
+  ec2_group:
+    name: webservers-access
+    state: absent
+  tags: ['cleanup']
+
+- name: Get my public IP
+  ipify_facts: # returns ipify_public_ip
+
+- name: Create webservers security group
+  ec2_group:
+    name: webservers-access
+    description: Assign access to webserver instances using Ansible
+    vpc_id: "{{ default_vpc.vpcs[0].vpc_id }}"
+    rules:
+    - proto: tcp
+      from_port: 80
+      to_port: 80
+      cidr_ip: 0.0.0.0/0
+    - proto: tcp
+      from_port: 22
+      to_port: 22
+      cidr_ip: "{{ ipify_public_ip }}/32"
+    tags:
+      created_by: Ansible
