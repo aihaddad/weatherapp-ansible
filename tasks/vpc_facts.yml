@@ -1,6 +1,7 @@
-- file: 
-    path: facts/default_vpc.yml
-    state: absent
+- name: Cleanup facts files
+  shell:
+    cmd: rm -rf facts/default_*.yml
+    warn: no
   tags: ['cleanup']
 
 - name: Get default VPC facts
@@ -15,11 +16,6 @@
     create: yes
     line: "{{ default_vpc | to_nice_yaml(indent=2) }}"
 
-- file: 
-    path: facts/default_subnets.yml
-    state: absent
-  tags: ['cleanup']
-
 - name: Get subnet facts
   ec2_vpc_subnet_info:
     filters:
@@ -32,11 +28,6 @@
     create: yes
     line: "{{ default_subnets | to_nice_yaml(indent=2) }}"
 
-- file: 
-    path: facts/amazon_linux_ami.yml
-    state: absent
-  tags: ['cleanup']
-
 - name: Get Amazon Linux AMI facts
   ec2_ami_info:
     owners: 137112412989 # Amazon
@@ -44,10 +35,10 @@
       name: "amzn2-ami-hvm-2.0.2020*"
       architecture: "x86_64"
       block-device-mapping.volume-type: standard
-  register: amazon_amis
+  register: default_amis
 
 - name: Store facts to YAML
   lineinfile:
-    path: facts/amazon_linux_ami.yml
+    path: facts/default_ami.yml
     create: yes
-    line: "{{ amazon_amis.images[-1] | to_nice_yaml(indent=2) }}" # latest
+    line: "{{ default_amis.images[-1] | to_nice_yaml(indent=2) }}" # latest
