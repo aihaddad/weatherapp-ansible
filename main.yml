@@ -6,3 +6,5 @@
     #   tags: ['up', 'down']
     - include_tasks: tasks/vpc_facts.yml
       tags: ['cleanup']
+    - include_tasks: tasks/keypairs.yml
+      tags: ['cleanup', 'git']

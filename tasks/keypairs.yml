@@ -1,0 +1,31 @@
+- name: Cleanup old keypair in VPC
+  ec2_key:
+    name: webservers_key
+    state: absent
+  tags: ['cleanup']
+
+- name: Cleanup local old keypair file
+  file:
+    path: .keypairs/webservers_key.pem
+    state: absent
+  tags: ['cleanup']
+
+- name: Create new SSH keypair
+  ec2_key:
+    name: "webservers_key"
+  register: keypair
+
+- name: Write keypair to local file
+  lineinfile:
+    create: yes
+    path: .keypairs/webservers_key.pem
+    line: "{{ keypair.key.private_key }}"
+    mode: 0600
+
+- name: Ensure access keys are git-ignored
+  lineinfile:
+    path: .gitignore
+    insertafter: EOF
+    line: .keypairs/*
+    state: present
+  tags: ['git']
