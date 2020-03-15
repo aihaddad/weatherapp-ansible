@@ -18,8 +18,7 @@ This is the Ansible section complementing the [Weatherapp][1] challenge/project.
 ## Ansible Steps
 
 * Locally source `ansible` user access information
-* Ensure presence of default VPC in the region
-* Gather default VPC and subnets facts
+* Gather __default__ VPC and subnets facts
 * Create a new SSH keypair
 * Copy keypair to `.keypairs` folder with the correct file mode
 * Ensure that `.keypairs` folder is git-ignored
@@ -39,7 +38,7 @@ ___Note to self:__ Make sure to use resource tagging, and have a reversal/destro
 ___
 ___Note:__ Terraform or CloudFormation are more "right" Infrastructure as Code (IaC) tools than Ansible
 (especially for more complicated setups) but this is an Ansible exercise in trying out different modules.
-I may actually revisit this project later to use one of them for the infrastructure building phases._
+I may  revisit this project later to use one of those tools for a more complete infrastructure build._
 ___
 
 
