@@ -1,0 +1,17 @@
+- name: Cleanup earlier image tarballs
+  file:
+    path: docker_images
+    state: absent
+  tags: ['cleanup']
+
+- name: Ensure images directory
+  file:
+    path: docker_images
+    state: directory
+
+- name: Package Docker image tarballs
+  shell:
+    cmd: "docker save {{ item }} > ./docker_images/{{ item }}.tar"
+  loop:
+    - "{{ frontend_image }}"
+    - "{{ backend_image }}"

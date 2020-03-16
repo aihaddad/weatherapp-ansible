@@ -2,6 +2,7 @@
 *sample*
 *secret*
 *facts/*
+*images/**
 
 # Add any manual configuration above this comment
 # Anything below this comment will be managed by Ansible, Leave as is!

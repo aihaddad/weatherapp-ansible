@@ -1,0 +1,20 @@
+- name: Push Docker image tarballs to servers
+  copy:
+    src: docker_images/
+    dest: /home/ec2-user
+    owner: ec2-user
+
+- name: Register new Docker images from tarballs
+  shell:
+    cmd: "docker load < /home/ec2-user/{{ item }}.tar"
+  loop:
+    - "{{ frontend_image }}"
+    - "{{ backend_image }}"
+
+- name: Docker run backend
+  shell:
+    cmd: "docker run -d -p 9000:9000 --name {{ backend_image }} -t {{ backend_image }}"
+
+- name: Docker run frontend
+  shell:
+    cmd: "docker run -d -p 80:8000 --name {{ frontend_image }} -t {{ frontend_image }}"

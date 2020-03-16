@@ -1,0 +1,13 @@
+# Use Docker CLI instead of the PyPi package required for docker modules
+---
+- hosts: localhost
+  gather_facts: no
+  tasks:
+
+    - include_tasks: tasks/docker_package.yml
+
+- hosts: webservers
+  gather_facts: no
+  tasks:
+  
+    - include_tasks: tasks/docker_deploy.yml
