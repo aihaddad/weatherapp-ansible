@@ -2,25 +2,27 @@
   ec2_key:
     name: webservers_key
     state: absent
-  tags: ['cleanup']
+  tags: ['never', 'cleanup']
 
 - name: Cleanup local old keypair file
   file:
     path: .keypairs/webservers_key.pem
     state: absent
-  tags: ['cleanup']
+  tags: ['never', 'cleanup']
 
 - name: Create new SSH keypair
   ec2_key:
     name: "webservers_key"
   register: keypair
+- debug: var=keypair
 
 - name: Write keypair to local file
   lineinfile:
     create: yes
     path: .keypairs/webservers_key.pem
     line: "{{ keypair.key.private_key }}"
-    mode: 0600
+    mode: 0400
+  when: keypair.msg == "key pair created"
 
 - name: Ensure access keys are git-ignored
   lineinfile:

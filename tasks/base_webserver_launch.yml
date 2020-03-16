@@ -10,27 +10,19 @@
     security_group: webservers_access
     state: running
     wait: yes
+    wait_timeout: 180
   register: base_webserver
-  
-- name: Add base webserver to runtime inventory
-  add_host:
-    name: base_webserver
-    ansible_host: "{{ base_webserver.instances[0].public_dns_name }}"
-    ansible_user: ec2-user
-    ansible_ssh_common_args: "'-o StrictHostKeyChecking=no'"
-    ansible_ssh_private_key_file: .keypairs/webservers_key.pem
-  register: inv
-- debug: var=inv
 
 - name: Commit webservers to inventory file
   lineinfile:
     path: inventory
-    insertafter: '^\[webservers\]'
+    insertafter: '^\[webservers\]\n'
     line: >-
-      {{ inv.add_host.host_name }}
-      ansible_user={{ inv.add_host.host_vars.ansible_user }}
-      ansible_ssh_common_args={{ inv.add_host.host_vars.ansible_ssh_common_args }}
-      ansible_ssh_private_key_file={{ inv.add_host.host_vars.ansible_ssh_private_key_file }}
+      base_webserver
+      ansible_host="{{ base_webserver.instances[0].public_dns_name }}"
+      ansible_user=ec2-user
+      ansible_ssh_extra_args="'-o StrictHostKeyChecking=no'"
+      ansible_ssh_private_key_file=.keypairs/webservers_key.pem
     state: present
 - meta: refresh_inventory
 

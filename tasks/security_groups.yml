@@ -1,9 +1,6 @@
 - name: Terminate base webserver
   include: base_webserver_terminate.yml
 
-- pause:
-    minutes: 1
-
 - name: Cleanup webservers security group
   ec2_group:
     name: webservers_access
@@ -28,4 +25,4 @@
       to_port: 22
       cidr_ip: "{{ ipify_public_ip }}/32"
     tags:
-      created_by: Ansible
+      CreatedBy: Ansible

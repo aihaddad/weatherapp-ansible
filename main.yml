@@ -2,8 +2,6 @@
 - hosts: localhost
   gather_facts: no
   tasks:
-    # - include_tasks: tasks/prepare.yml
-    #   tags: ['up', 'down']
     - include_tasks: tasks/vpc_facts.yml
       tags: ['cleanup']
     - include_tasks: tasks/keypairs.yml
@@ -11,5 +9,9 @@
     - include_tasks: tasks/security_groups.yml
       tags: ['cleanup']
     - include_tasks: tasks/base_webserver_launch.yml
-      tags: ['cleanup']
 
+- hosts: webservers
+  gather_facts: no
+  become: yes
+  tasks:
+    - include_tasks: tasks/setup_docker.yml

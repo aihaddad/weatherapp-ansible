@@ -1,0 +1,28 @@
+- name: Wait for SSH connection
+  wait_for_connection:
+    delay: 5
+    timeout: 90
+
+- name: Update system packages
+  package:
+    name: '*'
+    state: latest
+    update_only: yes
+
+- name: Install Docker
+  package:
+    name: docker
+    state: latest
+
+- name: Use Docker without sudo
+  user:
+    name: ec2-user
+    append: yes
+    groups:
+      - docker
+
+- name: Start Docker service
+  service:
+    name: docker
+    state: restarted
+    enabled: yes

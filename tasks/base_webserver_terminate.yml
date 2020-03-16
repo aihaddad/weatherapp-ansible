@@ -18,6 +18,7 @@
       - "{{ base_webserver.instances[0].instance_id }}"
     state: terminated
     wait: yes
+    wait_timeout: 180
   tags: ['never', 'cleanup']
 
 - name: Remove webservers from inventory
