@@ -2,11 +2,11 @@
 - hosts: localhost
   gather_facts: no
   tasks:
-    - include_tasks: tasks/vpc_facts.yml
+    - include_tasks: tasks/vpc_facts_gather.yml
       tags: ['cleanup']
-    - include_tasks: tasks/keypairs.yml
+    - include_tasks: tasks/keypairs_manage.yml
       tags: ['cleanup', 'git']
-    - include_tasks: tasks/security_groups.yml
+    - include_tasks: tasks/security_groups_manage.yml
       tags: ['cleanup']
     - include_tasks: tasks/base_webserver_launch.yml
 

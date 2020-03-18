@@ -1,0 +1,3 @@
+app_repo: https://github.com/aihaddad/weatherapp.git
+app_id: "{{ vault_app_id }}"
+endpoint: "{{ vault_endpoint }}"

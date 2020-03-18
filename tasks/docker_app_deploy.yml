@@ -1,0 +1,42 @@
+- name: Cleanup previous repos
+  file:
+    path: /home/ec2-user/weatherapp/
+    state: absent
+    
+- name: Pull app from Git repo
+  git:
+    repo: "{{ app_repo }}"
+    dest: /home/ec2-user/weatherapp
+
+- name: Push Docker .env
+  lineinfile:
+    path: /home/ec2-user/weatherapp/.env
+    create: yes
+    line: |
+      "APPID={{ app_id }}"
+      "ENDPOINT={{ endpoint }}"
+
+- name: Ensure frontend runs on HTTP port
+  # This is the best way I could think of 
+  replace:
+    path: /home/ec2-user/weatherapp/docker-compose.yml
+    regexp: '[0-9]+:8000'
+    replace: 80:8000
+
+# Use Docker's native commands to overcome module limitations due to PIP
+
+- name: Kill all containers
+  shell:
+    cmd:
+      docker container stop $(docker ps -aq) && docker container rm $(docker ps -aq)
+  ignore_errors: yes
+
+- name: Cleanup all images
+  shell:
+    cmd:
+      docker rmi $(docker images -aq)
+  ignore_errors: yes
+
+- name: Compose application
+  shell:
+    cmd: docker-compose -f /home/ec2-user/weatherapp/docker-compose.yml up -d --force-recreate
