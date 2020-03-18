@@ -1,11 +1,11 @@
 - name: Kill all containers
-  command:
+  shell:
     cmd:
       docker container stop $(docker ps -aq) && docker container rm $(docker ps -aq)
   ignore_errors: yes
 
-- name: cleanup all images
-  command:
+- name: Cleanup all images
+  shell:
     cmd:
       docker rmi $(docker images -aq)
   ignore_errors: yes
