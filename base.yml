@@ -14,4 +14,4 @@
   gather_facts: no
   become: yes
   tasks:
-    - include_tasks: tasks/setup_docker.yml
+    - include_tasks: tasks/docker_setup.yml
