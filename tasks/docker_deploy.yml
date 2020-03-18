@@ -1,3 +1,15 @@
+- name: Kill all containers
+  command:
+    cmd:
+      docker container stop $(docker ps -aq) && docker container rm $(docker ps -aq)
+  ignore_errors: yes
+
+- name: cleanup all images
+  command:
+    cmd:
+      docker rmi $(docker images -aq)
+  ignore_errors: yes
+
 - name: Push Docker image tarballs to servers
   copy:
     src: docker_images/
@@ -7,6 +19,14 @@
 - name: Register new Docker images from tarballs
   shell:
     cmd: "docker load < /home/ec2-user/{{ item }}.tar"
+  loop:
+    - "{{ frontend_image }}"
+    - "{{ backend_image }}"
+
+- name: Remove tarballs
+  file:
+    path: "/home/ec2-user/{{ item }}.tar"
+    state: absent
   loop:
     - "{{ frontend_image }}"
     - "{{ backend_image }}"

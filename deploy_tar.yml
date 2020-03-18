@@ -1,0 +1,17 @@
+# Use this playbook to deploy Docker images already pre-built on your local control node
+# without the need to push to a repository.
+# This method is slow, inefficient and highly dependent on connection speed.
+# It is only meant as a trial, use the app deployment method instead!
+---
+- hosts: localhost
+  gather_facts: no
+  tasks:
+
+    - include_tasks: tasks/docker_package.yml
+      tags: ['cleanup']
+
+- hosts: webservers
+  gather_facts: no
+  tasks:
+  
+    - include_tasks: tasks/docker_deploy.yml
