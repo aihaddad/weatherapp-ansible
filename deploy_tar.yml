@@ -7,11 +7,11 @@
   gather_facts: no
   tasks:
 
-    - include_tasks: tasks/docker_package.yml
+    - include_tasks: tasks/docker_tar_package.yml
       tags: ['cleanup']
 
 - hosts: webservers
   gather_facts: no
   tasks:
   
-    - include_tasks: tasks/docker_deploy.yml
+    - include_tasks: tasks/docker_tar_deploy.yml
