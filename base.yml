@@ -11,7 +11,7 @@
     - include_tasks: tasks/base_webserver_launch.yml
 
 - hosts: webservers
-  gather_facts: no
   become: yes
   tasks:
+    - include_tasks: tasks/env_setup.yml
     - include_tasks: tasks/docker_setup.yml
