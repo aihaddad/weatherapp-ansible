@@ -14,7 +14,7 @@
   ec2_key:
     name: "webservers_key"
   register: keypair
-- debug: var=keypair
+  no_log: yes
 
 - name: Write keypair to local file
   lineinfile:
@@ -23,6 +23,7 @@
     line: "{{ keypair.key.private_key }}"
     mode: 0400
   when: keypair.msg == "key pair created"
+  no_log: yes
 
 - name: Ensure access keys are git-ignored
   lineinfile:
