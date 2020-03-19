@@ -9,8 +9,7 @@
       assign_public_ip: yes
     security_group: webservers_access
     state: running
-    wait: yes
-    wait_timeout: 180
+    wait_timeout: 60
   register: base_webserver
 
 - name: Commit webservers to inventory file
@@ -19,9 +18,9 @@
     insertafter: '^\[webservers\]\n'
     line: >-
       base_webserver
-      ansible_host="{{ base_webserver.instances[0].public_dns_name }}"
+      ansible_host={{ base_webserver.instances[0].public_dns_name }}
       ansible_user=ec2-user
-      ansible_ssh_extra_args="'-o StrictHostKeyChecking=no'"
+      ansible_ssh_common_args="'-o StrictHostKeyChecking=no'"
       ansible_ssh_private_key_file=.keypairs/webservers_key.pem
     state: present
 - meta: refresh_inventory
