@@ -9,9 +9,3 @@
     - include_tasks: tasks/security_groups_manage.yml
       tags: ['cleanup']
     - include_tasks: tasks/base_webserver_launch.yml
-
-- hosts: webservers
-  become: yes
-  tasks:
-    - include_tasks: tasks/env_setup.yml
-    - include_tasks: tasks/docker_setup.yml
