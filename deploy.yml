@@ -1,6 +1,5 @@
 ---
 - hosts: webservers
-  gather_facts: no
   tasks:
   
     - include_tasks: tasks/docker_app_deploy.yml

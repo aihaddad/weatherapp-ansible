@@ -1,3 +1,6 @@
 app_repo: https://github.com/aihaddad/weatherapp.git
+app_home: /home/ec2-user/weatherapp
 app_id: "{{ vault_app_id }}"
-endpoint: "{{ vault_endpoint }}"
+app_api_port: 9000
+app_client_port: 80
+app_endpoint: http://{{ ansible_host }}:{{ app_api_port }}/api

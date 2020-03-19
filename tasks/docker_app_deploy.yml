@@ -1,42 +1,31 @@
-- name: Cleanup previous repos
+- name: Cleanup previous repo
   file:
-    path: /home/ec2-user/weatherapp/
+    path: "{{ app_home }}/"
     state: absent
     
 - name: Pull app from Git repo
   git:
     repo: "{{ app_repo }}"
-    dest: /home/ec2-user/weatherapp
+    dest: "{{ app_home }}"
 
-- name: Push Docker .env
+- name: Push docker-compose environment
   lineinfile:
-    path: /home/ec2-user/weatherapp/.env
+    path: "{{ app_home }}/.env"
     create: yes
     line: |
-      "APPID={{ app_id }}"
-      "ENDPOINT={{ endpoint }}"
-
-- name: Ensure frontend runs on HTTP port
-  # This is the best way I could think of 
-  replace:
-    path: /home/ec2-user/weatherapp/docker-compose.yml
-    regexp: '[0-9]+:8000'
-    replace: 80:8000
-
+      APPID={{ app_id }}
+      ENDPOINT={{ app_endpoint }}
+      CLIENT_PORT={{ app_client_port }}
+  
 # Use Docker's native commands to overcome module limitations due to PIP
-
-- name: Kill all containers
-  shell:
-    cmd:
-      docker container stop $(docker ps -aq) && docker container rm $(docker ps -aq)
-  ignore_errors: yes
-
-- name: Cleanup all images
-  shell:
-    cmd:
-      docker rmi $(docker images -aq)
-  ignore_errors: yes
 
 - name: Compose application
   shell:
-    cmd: docker-compose -f /home/ec2-user/weatherapp/docker-compose.yml up -d --force-recreate
+    cmd: docker system prune -f
+  # [Docker bug] doesn't respect user in group "docker", still need sudo
+  become: yes
+
+- name: Compose application
+  shell:
+    # [Docker bug] --project-directory flag does not pick up the config file
+    cmd: cd {{ app_home }} && docker-compose up -d --build --force-recreate
