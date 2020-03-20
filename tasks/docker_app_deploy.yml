@@ -19,7 +19,7 @@
   
 # Use Docker's native commands to overcome module limitations due to PIP
 
-- name: Compose application
+- name: Cleanup previous docker containers and images
   shell:
     cmd: docker system prune -f
   # [Docker bug] doesn't respect user in group "docker", still need sudo
