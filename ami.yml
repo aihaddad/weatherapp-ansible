@@ -3,5 +3,3 @@
   tasks:
     - include_tasks: tasks/ami_manage.yml
       tags: ['create', 'cleanup']
-  handlers:
-    - import_tasks: handlers/ami_create.yml

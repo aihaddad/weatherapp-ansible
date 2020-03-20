@@ -6,8 +6,24 @@
   delegate_to: localhost
   register: base_webserver
   tags: ['create']
-  changed_when: base_webserver.instances!=[]
-  notify: create ami
+
+- name: Create AMI from base webserver
+  ec2_ami:
+    instance_id: "{{ base_webserver.instances[0].instance_id }}"
+    wait: yes
+    name: "WeatherappDockerAMI-{{ ansible_date_time.date }}T{{ ansible_date_time.hour }}-{{ ansible_date_time.minute }}"
+    tags:
+      Name: WeatherappWebserverAMI
+      CreatedBy: Ansible
+  delegate_to: localhost
+  register: ami
+  when: base_webserver.instances!=[]
+  tags: ['create']
+
+- name: Set latest AMI ID
+  set_fact:
+    latest_ami: "{{ ami.image_id }}"
+
 
 - name: Get webserver AMI info
   ec2_ami_info:
