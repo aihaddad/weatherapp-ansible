@@ -15,7 +15,7 @@
   # Docker doesn't REALLY start despite successful status, needs task re-run
   shell:
     cmd: service docker start && chkconfig docker on
-  warn: no
+    warn: no
   # The below script SHOULD be the right one if everything functioned normally
   # systemd:
   #   name: docker
