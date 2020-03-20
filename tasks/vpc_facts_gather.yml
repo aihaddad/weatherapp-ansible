@@ -28,6 +28,12 @@
     create: yes
     line: "{{ default_subnets | to_nice_yaml(indent=2) }}"
 
+- name: Extract subnet IDs
+  set_fact:
+    # Python slicing doesn't work here
+    subnet_ids: "{{ [0,1,2] | map('extract', default_subnets.subnets, 'subnet_id') | list }}"
+    cacheable: yes
+    
 - name: Get Amazon Linux AMI facts
   ec2_ami_info:
     owners: 137112412989 # Amazon
