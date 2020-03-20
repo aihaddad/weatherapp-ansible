@@ -1,0 +1,27 @@
+- name: Check for existing base webserver
+  ec2_instance_info:
+    filters:
+      instance-state-name: ['pending', 'running', 'stopped']
+      tag:Name: BaseWebserver
+  delegate_to: localhost
+  register: base_webserver
+  tags: ['create']
+  changed_when: base_webserver.instances!=[]
+  notify: create ami
+
+- name: Get webserver AMI info
+  ec2_ami_info:
+    owner: "{{ aws_account_number }}"
+    filters:
+      tag:Name: WeatherappWebserverAMI
+      tag:CreatedBy: Ansible
+  register: webserver_amis
+  tags: ['never', 'cleanup']
+
+- name: Cleanup webserver AMIs
+  ec2_ami:
+    image_id: "{{ item.image_id }}"
+    delete_snapshot: yes
+    state: absent
+  loop: "{{ webserver_amis.images }}"
+  tags: ['never', 'cleanup']

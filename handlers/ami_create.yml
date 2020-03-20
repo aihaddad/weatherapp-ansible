@@ -1,0 +1,10 @@
+- name: Create AMI from base webserver
+  ec2_ami:
+    instance_id: "{{base_webserver.instances[0].instance_id}}"
+    wait: yes
+    name: "WeatherappDockerAMI-{{ ansible_date_time.date }}T{{ ansible_date_time.hour }}-{{ ansible_date_time.minute }}"
+    tags:
+      Name: WeatherappWebserverAMI
+      CreatedBy: Ansible
+  delegate_to: localhost
+  listen: create ami

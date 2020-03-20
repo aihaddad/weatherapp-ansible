@@ -3,3 +3,4 @@ backend_image: weatherapp_backend
 base_vm_type: t3.nano
 app_repo: https://github.com/aihaddad/weatherapp.git
 app_api_port: 9000
+aws_account_number: "{{ vault_aws_account_number }}"
