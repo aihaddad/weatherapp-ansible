@@ -21,7 +21,7 @@
       cidr_ip: 0.0.0.0/0
     - proto: tcp
       ports:
-        - 9000
+        - "{{ app_api_port }}"
       # This is a hack-y solution to allow the frontend to request from backend api
       # TODO: figure out a method to limit this from public access
       cidr_ip: 0.0.0.0/0
