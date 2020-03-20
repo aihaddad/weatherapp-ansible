@@ -1,6 +1,8 @@
 - name: Create base webserver instance
   ec2_instance:
-    name: AnsibleBaseWebserver
+    name: BaseWebserver
+    tags:
+      CreatedBy: Ansible
     instance_type: "{{ base_vm_type }}"
     image_id: "{{ default_amis.images[-1].image_id }}"
     key_name: webservers_key
@@ -30,8 +32,8 @@
 - name: Get base webserver facts
   ec2_instance_info:
     filters:
-      instance-state-name: running
-      tag:Name: AnsibleBaseWebserver
+      instance-state-name: ['pending', 'running', 'stopped']
+      tag:Name: BaseWebserver
   register: base_webserver
 
 - name: Cleanup facts file

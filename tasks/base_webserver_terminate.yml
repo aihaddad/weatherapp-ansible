@@ -2,7 +2,7 @@
   ec2_instance_info:
     filters:
       instance-state-name: running
-      tag:Name: AnsibleBaseWebserver
+      tag:Name: BaseWebserver
   register: base_webserver
   tags: ['never', 'cleanup']
 
