@@ -4,3 +4,4 @@
   tasks:
     - include_tasks: tasks/system_setup.yml
     - include_tasks: tasks/docker_setup.yml
+- import_playbook: ami.yml

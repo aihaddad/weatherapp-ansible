@@ -3,4 +3,3 @@
   tasks:
     - include_tasks: tasks/docker_app_deploy.yml
     - include_tasks: tasks/ami_manage.yml
-- import_playbook: ami.yml
