@@ -4,3 +4,4 @@ base_vm_type: t3.nano
 app_repo: https://github.com/aihaddad/weatherapp.git
 app_api_port: 9000
 aws_account_number: "{{ vault_aws_account_number }}"
+scale_count: 3 # this is the number of Availability Zones in the EU-NORTH-1 Region

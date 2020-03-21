@@ -1,0 +1,64 @@
+- include_vars: facts/default_subnets.yml
+- include_vars: facts/webserver_amis.yml
+
+- name: Scale out webserver instances
+  ec2_instance:
+    name: "WebserverReplica-{{ ansible_date_time.date }}T{{ ansible_date_time.hour }}-{{ ansible_date_time.minute }}-{{ item + 1 }}"
+    tags:
+      CreatedBy: Ansible
+      Type: Replica
+    instance_type: "{{ base_vm_type }}"
+    image_id: "{{ images[-1].image_id }}"
+    key_name: webservers_key
+    vpc_subnet_id: "{{ subnets[item%3].subnet_id }}"
+    network:
+      assign_public_ip: yes
+    security_group: webservers_access
+    state: running
+    wait_timeout: 60
+  register: base_webserver
+  loop: "{{ range(scale_count) | list }}"
+  tags: ['out']
+
+- name: Get webserver replicas facts
+  ec2_instance_info:
+    filters:
+      instance-state-name: ['pending', 'running', 'stopped']
+      tag:CreatedBy: Ansible
+      tag:Type: Replica
+  register: webserver_replicas
+  tags: ['always']
+
+- name: Commit webserver replicas to inventory file
+  blockinfile:
+    path: inventory
+    insertafter: '^\[webservers\]\n'
+    marker: "# {mark} WEBSERVER REPLICA {{ item.tags.Name }}"
+    block: >-
+      {{ item.public_dns_name }}
+      ansible_user=ec2-user
+      ansible_ssh_common_args="'-o StrictHostKeyChecking=no'"
+      ansible_ssh_private_key_file=.keypairs/webservers_key.pem
+    state: present
+  loop: "{{ webserver_replicas.instances }}"
+  tags: ['out']
+- meta: refresh_inventory
+
+- name: Remove webserver replicas from inventory file
+  blockinfile:
+    path: inventory
+    insertafter: '^\[webservers\]\n'
+    marker: "# {mark} WEBSERVER REPLICA {{ item.tags.Name }}"
+    state: absent
+  loop: "{{ webserver_replicas.instances }}"
+  tags: ['never', 'in']
+- meta: refresh_inventory
+
+- name: Terminate base webserver instance
+  ec2_instance:
+    instance_ids:
+      - "{{ item.instance_id }}"
+    state: terminated
+    wait: no
+  loop: "{{ webserver_replicas.instances }}"
+  tags: ['never', 'in']

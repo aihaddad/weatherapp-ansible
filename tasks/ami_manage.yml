@@ -20,19 +20,26 @@
   when: base_webserver.instances!=[]
   tags: ['create']
 
-- name: Set latest AMI ID
-  set_fact:
-    latest_ami: "{{ ami.image_id }}"
-
-
-- name: Get webserver AMI info
+- name: Get webserver AMI facts
   ec2_ami_info:
     owner: "{{ aws_account_number }}"
     filters:
       tag:Name: WeatherappWebserverAMI
       tag:CreatedBy: Ansible
   register: webserver_amis
-  tags: ['never', 'cleanup']
+  tags: ['cleanup']
+
+- name: Cleanup facts file
+  file:
+    path: facts/webserver_amis.yml
+    state: absent
+  tags: ['cleanup']
+
+- name: Store facts to YAML
+  lineinfile:
+    path: facts/webserver_amis.yml
+    create: yes
+    line: "{{ webserver_amis | to_nice_yaml(indent=2) }}"
 
 - name: Cleanup webserver AMIs
   ec2_ami:
