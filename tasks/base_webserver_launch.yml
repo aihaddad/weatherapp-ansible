@@ -31,6 +31,45 @@
     state: present
 - meta: refresh_inventory
 
+- name: Create ELB target group
+  elb_target_group:
+    name: webservers-target-group
+    protocol: http
+    port: 80
+    vpc_id: "{{ default_vpc.vpcs[0].vpc_id }}"
+    state: present
+    tags:
+      CreatedBy: Ansible
+
+- name: Add base webserver instance to target group
+  elb_target:
+    target_group_name: webservers-target-group
+    target_id: "{{ base_webserver.instances[0].instance_id }}"
+    state: present
+
+- name: Create webserver load balancer
+  elb_application_lb:
+    name: webservers-elb
+    state: present
+    subnets: "{{ subnet_ids }}"
+    security_groups:
+      - webservers_access
+    listeners:
+      - Protocol: HTTP
+        Port: 80
+        DefaultActions:
+          - Type: forward
+            TargetGroupName: webservers-target-group
+    tags:
+      CreatedBy: Ansible
+  register: elb
+
+- name: Note ELB URL
+  lineinfile:
+    path: facts/elb_url.yml
+    create: yes
+    line: "elb_url: {{ elb.dns_name }}"
+
 - name: Get base webserver facts
   ec2_instance_info:
     filters:

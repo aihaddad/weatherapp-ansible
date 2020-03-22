@@ -16,7 +16,7 @@
       assign_public_ip: yes
     security_group: webservers_access
     state: running
-    wait_timeout: 60
+    wait_timeout: 90
   register: base_webserver
   loop: "{{ range(scale_count) | list }}"
   tags: ['out']
@@ -45,12 +45,30 @@
   tags: ['out']
 - meta: refresh_inventory
 
-- name: Terminate base webserver instance
+- name: Register webserver instances to target group
+  elb_target:
+    target_group_name: webservers-target-group
+    target_id: "{{ item.instance_id }}"
+    state: present
+  loop: "{{ webserverr_replicas.instances }}"
+  tags: ['out']
+
+- name: Scale in webserver instances
   ec2_instance:
     instance_ids:
       - "{{ item.instance_id }}"
     state: terminated
-    wait: no
+    wait: yes
+    wait_timeout: 90
+  loop: "{{ [-1] | map('extract', webserver_replicas.instances) | list }}"
+  # loop: "{{ webserver_replicas.instances }}"
+  tags: ['never', 'in']
+
+- name: De-register webserver instances from target group
+  elb_target:
+    target_group_name: webservers-target-group
+    target_id: "{{ item.instance_id }}"
+    state: absent
   loop: "{{ [-1] | map('extract', webserver_replicas.instances) | list }}"
   # loop: "{{ webserver_replicas.instances }}"
   tags: ['never', 'in']
@@ -58,7 +76,6 @@
 - name: Remove webserver replicas from inventory file
   blockinfile:
     path: inventory
-    insertafter: '^\[webservers\]\n'
     marker: "# {mark} WEBSERVER REPLICA {{ item.tags.Name }}"
     state: absent
   loop: "{{ [-1] | map('extract', webserver_replicas.instances) | list }}"
