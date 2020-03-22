@@ -5,8 +5,9 @@
   ec2_instance:
     name: "WebserverReplica-{{ ansible_date_time.date }}T{{ ansible_date_time.hour }}-{{ ansible_date_time.minute }}-{{ item + 1 }}"
     tags:
+      Type: WebServer
+      Designation: Replica
       CreatedBy: Ansible
-      Type: Replica
     instance_type: "{{ base_vm_type }}"
     image_id: "{{ images[-1].image_id }}"
     key_name: webservers_key
@@ -25,7 +26,7 @@
     filters:
       instance-state-name: ['pending', 'running', 'stopped']
       tag:CreatedBy: Ansible
-      tag:Type: Replica
+      tag:Designation: Replica
   register: webserver_replicas
   tags: ['always']
 
@@ -44,21 +45,23 @@
   tags: ['out']
 - meta: refresh_inventory
 
-- name: Remove webserver replicas from inventory file
-  blockinfile:
-    path: inventory
-    insertafter: '^\[webservers\]\n'
-    marker: "# {mark} WEBSERVER REPLICA {{ item.tags.Name }}"
-    state: absent
-  loop: "{{ webserver_replicas.instances }}"
-  tags: ['never', 'in']
-- meta: refresh_inventory
-
 - name: Terminate base webserver instance
   ec2_instance:
     instance_ids:
       - "{{ item.instance_id }}"
     state: terminated
     wait: no
-  loop: "{{ webserver_replicas.instances }}"
+  loop: "{{ [-1] | map('extract', webserver_replicas.instances) | list }}"
+  # loop: "{{ webserver_replicas.instances }}"
   tags: ['never', 'in']
+
+- name: Remove webserver replicas from inventory file
+  blockinfile:
+    path: inventory
+    insertafter: '^\[webservers\]\n'
+    marker: "# {mark} WEBSERVER REPLICA {{ item.tags.Name }}"
+    state: absent
+  loop: "{{ [-1] | map('extract', webserver_replicas.instances) | list }}"
+  # loop: "{{ webserver_replicas.instances }}"
+  tags: ['never', 'in']
+- meta: refresh_inventory

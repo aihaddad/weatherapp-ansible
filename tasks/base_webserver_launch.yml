@@ -2,6 +2,8 @@
   ec2_instance:
     name: BaseWebserver
     tags:
+      Type: WebServer
+      Designation: Base
       CreatedBy: Ansible
     instance_type: "{{ base_vm_type }}"
     image_id: "{{ default_amis.images[-1].image_id }}"
